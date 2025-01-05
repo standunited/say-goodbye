@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer with Stickers</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #2F4F4F; /* Dark slate background */
+            color: #FFFFFF;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            text-align: center;
+        }
+        #countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Space between items */
+            background-color: #37474F; /* Dark gray box background */
+            padding: 20px 30px;
+            border-radius: 10px; /* Rounded corners */
+            z-index: 10; /* Make sure it's above the images */
+        }
+        .time-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .time-value {
+            font-size: 4rem;
+            font-weight: bold;
+        }
+        .time-label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            margin-top: 5px;
+            color: #B0BEC5; /* Light gray for labels */
+        }
+        .time-seconds {
+            color: #FF4081; /* Highlight seconds in pink */
+        }
+        .sticker {
+            position: absolute;
+            width: 100px; /* Adjust size */
+            height: auto;
+            animation: float 5s infinite ease-in-out;
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        #btc-chart {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="message">Shoaib Says Goodbye</h1>
+    <div id="countdown">
+        <div class="time-section">
+            <div class="time-value" id="days">00</div>
+            <div class="time-label">Days</div>
+        </div>
+        <div class="time-section">
+            <div class="time-value" id="hours">00</div>
+            <div class="time-label">Hours</div>
+        </div>
+        <div class="time-section">
+            <div class="time-value" id="minutes">00</div>
+            <div class="time-label">Minutes</div>
+        </div>
+        <div class="time-section">
+            <div class="time-value time-seconds" id="seconds">00</div>
+            <div class="time-label">Seconds</div>
+        </div>
+    </div>
+
+    <div id="btc-chart">
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js">
+        {
+            "symbols": [
+                [
+                    "Bitcoin",
+                    "BINANCE:BTCUSDT|1D"
+                ]
+            ],
+            "chartOnly": false,
+            "width": "100%",
+            "height": "400",
+            "locale": "en",
+            "colorTheme": "dark",
+            "gridLineColor": "rgba(42, 46, 57, 0.06)",
+            "fontColor": "#9FA3A9",
+            "isTransparent": false,
+            "autosize": true,
+            "showVolume": true,
+            "scalePosition": "right",
+            "scaleMode": "Normal",
+            "fontFamily": "-apple-system, BlinkMacSystemFont, Trebuchet MS, Roboto, Ubuntu, sans-serif",
+            "noTimeScale": false,
+            "valuesTracking": "1",
+            "chartType": "candlesticks",
+            "container_id": "btc-chart"
+        }
+        </script>
+    </div>
+
+    <script>
+        // Set the target date and time
+        const targetDate = new Date("2025-01-10T00:00:00").getTime();
+
+        // Update the countdown every second
+        const interval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            // Calculate time components
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Update countdown values
+            document.getElementById("days").innerText = String(days).padStart(2, '0');
+            document.getElementById("hours").innerText = String(hours).padStart(2, '0');
+            document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
+            document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
+
+            // If the countdown is over, stop the timer
+            if (distance < 0) {
+                clearInterval(interval);
+                document.getElementById("days").innerText = "00";
+                document.getElementById("hours").innerText = "00";
+                document.getElementById("minutes").innerText = "00";
+                document.getElementById("seconds").innerText = "00";
+                document.querySelector("h1").innerText = "The Wait is Over!";
+            }
+        }, 1000);
+
+        // Add 10 images dynamically
+        const body = document.body;
+
+        for (let i = 1; i <= 10; i++) {
+            const img = document.createElement('img');
+            img.src = `images/image${i}.webp`; // Replace `images/` with your actual folder path
+            img.className = 'sticker';
+
+            // Ensure images do not overlap the countdown area
+            let top, left;
+            do {
+                top = Math.random() * 90; // Top position (percentage)
+                left = Math.random() * 90; // Left position (percentage)
+            } while (
+                top > 30 && top < 70 && // Restrict vertical overlap (30% - 70%)
+                left > 20 && left < 80   // Restrict horizontal overlap (20% - 80%)
+            );
+
+            img.style.top = `${top}%`;
+            img.style.left = `${left}%`;
+            img.style.animationDelay = `${Math.random() * 5}s`;
+            body.appendChild(img);
+        }
+    </script>
+</body>
+</html>
